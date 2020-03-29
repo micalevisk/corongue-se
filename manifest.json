@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+
+  "name": "Corongue-se",
+  "description": "A cura da pandemia para as páginas web. #CoronaKindle",
+  "version": "1.0.0",
+
+  "background": {
+    "scripts": ["src/background.js"],
+    "persistent": true
+  },
+  
+	"browser_action": {},
+
+  "icons": {
+    "50": "icons/icon50.png",
+    "100": "icons/icon100.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}

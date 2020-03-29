@@ -1,0 +1,20 @@
+:root {
+  --coronguese-source: data-modified;
+}
+
+@keyframes changeLetter {
+  0% {
+    content: attr(data-original);
+  }
+  50% {
+    color: white;
+  }
+  100% {
+    content: attr(data-modified);
+  }
+}
+.__micalevisk_ext_coronguese__::before {
+  content: attr( var(--coronguese-source) );
+  animation: changeLetter 3s linear;
+}
+
