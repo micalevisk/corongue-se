@@ -2,8 +2,8 @@
   "manifest_version": 2,
 
   "name": "Corongue-se",
-  "description": "A cura da pandemia para as páginas web. #CoronaKindle",
-  "version": "1.0.0",
+  "description": "A cura da nova pandemia (AKA coronga) para as páginas web. #CoronaKindle",
+  "version": "1.1.0",
 
   "background": {
     "scripts": ["src/background.js"],

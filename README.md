@@ -4,21 +4,31 @@
 
 ## Features
 
-- O ícone da extensão informa a quantidade de seringas utilizadas para salvar página
+- O ícone da extensão informa a quantidade de seringas utilizadas para salvar a página
 - É possível ativar/desativar clicando no ícone da extensão (otimizado thanks to [_CSS variables_](https://caniuse.com/#search=css%20variables))
 - Funciona no https://google.com ignorando os _breadcrumbs_ que indicam a URL da página indexada
 - Funciona em SPAs (ao menos na página dedicada ao _coronavirus_ na busca do Google)
+- Não substitui em partes de URL
 - Não usa recursão e nem carrega todos os elementos da página de um só vez (thanks to [`document.createNodeIterator()`](https://caniuse.com/#search=createnodeiterator))
 
 ![demo](./demo.png)
 
+### Testes
+
+Páginas para testar:
+
+- https://www.google.com/search?q=coronavirus
+- http://www.tjsp.jus.br/Coronavirus
+- https://webcache.googleusercontent.com/search?q=cache:uiRKlsc7mDsJ:https://www.saude.gov.br/saude-de-a-z/coronavirus
+- https://www.twitch.tv/codigofalado
+
 ## Como usar?
 
-1. Vá para a aba [releases](https://github.com/micalevisk/corongue-se/releases) deste repositório, baixe e extraia o conteúdo para algum diretório conhecido
+1. Vá para a aba [releases](https://github.com/micalevisk/corongue-se/releases) deste repositório, baixe a última versão e extraia o conteúdo para algum diretório conhecido
 2. Em seu navegador, vá para a página **`chrome://extensions`**
-3. Ative a checkbox **Developer mode**
-4. Clique no botão **Load unpacked** e selecione o diretório extraído no passo (1)
+3. Marque a checkbox **Developer mode**
+4. Clique no botão **Load unpacked** e selecione o diretório extraído no passo [1]
 
 ---
 
-- icons (c) https://icons8.com.br/icon/10221/coronavirus
+- icons from (c) https://icons8.com.br/icon/10221/coronavirus

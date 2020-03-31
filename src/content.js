@@ -1,15 +1,18 @@
 let isActive = true
 let totalOccurrences = 0
-
-const blacklistRegexes = [
-  'coronav[ií]rus',
-  'corona\sv[ií]rus',
-  'covid-?19',
-  'covid',
-]
-const blacklistRegExp = new RegExp(`\\b${blacklistRegexes.join('|')}\\b`, 'gi')
-
+const ELEMENT_DONE_CLASSNAME = '__micalevisk_ext_coronguese__'
 const isGooglePage = document.location.origin.includes('.google.')
+
+
+const blacklistRegExp = (function(){
+  const blacklistWordsRE = [
+    'coronav[ií]rus',
+    'corona\sv[ií]rus',
+    'covid-?19',
+    'covid',
+  ]
+  return new RegExp(`\\b${blacklistWordsRE.join('|')}\\b`, 'gi')
+}())
 
 const getEmoji = (function(){
   const emojis = [
@@ -17,68 +20,82 @@ const getEmoji = (function(){
     '💉',
   ]
   let i=0
-  return () => emojis[i++ % emojis.length]    
+  return () => emojis[i++ % emojis.length]
 }())
 
+const isValidURL = (strMaybeURL) => {
+  try {
+    new URL(strMaybeURL)
+    return true
+  } catch (_err) {
+    return false
+  }
+}
 
 const replaceTextsOnNode = (textNode) => {
   let occurrences = 0
 
-  // Custom filters to prevent replace
-  const isGoogleBreadcrumb = isGooglePage && textNode.nodeValue.includes(' › ') 
+  // Custom filters to prevent replace in non-valid texts node
+  const isGoogleBreadcrumb = isGooglePage && textNode.nodeValue.includes(' › ')
   const isGoogleHrefContent = isGooglePage && textNode.parentNode.className.includes('HRf')
+  const isURL = isValidURL(textNode.nodeValue)
 
-  const canSearchAndReplace = !isGoogleBreadcrumb && !isGoogleHrefContent
+  const canSearchAndReplace = !isGoogleBreadcrumb && !isGoogleHrefContent && !isURL
   if (canSearchAndReplace) {
     const replacer = (match) => {
       occurrences++
       const newValue = getEmoji()
-      return `<span class="__micalevisk_ext_coronguese__" data-modified="${newValue}" data-original="${match}"></span>`
+      return `<span class="${ELEMENT_DONE_CLASSNAME}" data-modified="${newValue}" data-original="${match}"></span>`
     }
 
     const newValue = textNode.nodeValue.replace(blacklistRegExp, replacer)
     if (occurrences > 0) {
+      console.log(textNode)
       const wrapperEl = document.createElement('span')
       wrapperEl.innerHTML = newValue
-      textNode.replaceWith(wrapperEl) // Now this element has some parent node
+      textNode.replaceWith(wrapperEl) // Now this element a parent node
       wrapperEl.outerHTML = wrapperEl.innerHTML // so we can throw away the top level SPAN tag
     }
   }
-  
+
   return occurrences
 }
 
-const replaceAllAndUpdateBadge = () => {
-  const nodeIt = document.createNodeIterator(
-    document.body,
-    NodeFilter.SHOW_TEXT,
-    (node) =>
-        (
-          !node.parentNode.nodeName.endsWith('SCRIPT') &&
-          node.nodeValue.trim() &&
-          !node.parentNode.classList.contains('__micalevisk_ext_coronguese__')
-        )
-      ? NodeFilter.FILTER_ACCEPT
-      : NodeFilter.FILTER_REJECT
-  );
+const replaceAllAndUpdateBadge = (function(){
+  const tagsNameToIgnore = ['SCRIPT', 'NOSCRIPT', 'STYLE', 'SOURCE', 'TITLE', 'META']
+  return () => {
+    const nodeIt = document.createNodeIterator(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      (node) =>
+          (
+            !tagsNameToIgnore.includes(node.parentNode.nodeName) &&
+            node.nodeValue.trim() &&
+            !node.parentNode.classList.contains(ELEMENT_DONE_CLASSNAME)
+          )
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_REJECT
+    )
 
-  while (nodeIt.nextNode()) {
-    totalOccurrences += replaceTextsOnNode(nodeIt.referenceNode)
-  }
+    while (nodeIt.nextNode()) {
+      totalOccurrences += replaceTextsOnNode(nodeIt.referenceNode)
+    }
 
-  if (isActive) {
-    chrome.runtime.sendMessage({
-      action: 'set-tracker-count',
-      count: totalOccurrences,
-    })
+    if (isActive) {
+      chrome.runtime.sendMessage({
+        action: 'set-tracker-count',
+        count: totalOccurrences,
+      })
+    }
   }
-}
+}())
 
 const toggleVisibility = (function(){ 
   const attrSources = ['data-original', 'data-modified']
   return (isActive) =>
     document.documentElement.style.setProperty('--coronguese-source', attrSources[+isActive]) 
 }())
+
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request === 'toggle-tab') {
