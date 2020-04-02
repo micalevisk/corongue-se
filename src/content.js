@@ -50,7 +50,6 @@ const replaceTextsOnNode = (textNode) => {
 
     const newValue = textNode.nodeValue.replace(blacklistRegExp, replacer)
     if (occurrences > 0) {
-      console.log(textNode)
       const wrapperEl = document.createElement('span')
       wrapperEl.innerHTML = newValue
       textNode.replaceWith(wrapperEl) // Now this element a parent node
