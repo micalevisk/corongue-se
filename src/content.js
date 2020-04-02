@@ -1,8 +1,9 @@
 let isActive = true
 let totalOccurrences = 0
 const ELEMENT_DONE_CLASSNAME = '__micalevisk_ext_coronguese__'
-const isGooglePage = document.location.origin.includes('.google.')
 
+const isGooglePage = document.location.hostname.startsWith('www.google.')
+const isDuckDuckGoPage = document.location.hostname.startsWith('duckduckgo.')
 
 const blacklistRegExp = (function(){
   const blacklistWordsRE = [
@@ -39,8 +40,9 @@ const replaceTextsOnNode = (textNode) => {
   const isGoogleBreadcrumb = isGooglePage && textNode.nodeValue.includes(' › ')
   const isGoogleHrefContent = isGooglePage && textNode.parentNode.className.includes('HRf')
   const isURL = isValidURL(textNode.nodeValue)
+  const isDDGURL = isDuckDuckGoPage && textNode.parentNode.className.includes('result__url')
 
-  const canSearchAndReplace = !isGoogleBreadcrumb && !isGoogleHrefContent && !isURL
+  const canSearchAndReplace = !isGoogleBreadcrumb && !isGoogleHrefContent && !isURL && !isDDGURL
   if (canSearchAndReplace) {
     const replacer = (match) => {
       occurrences++
