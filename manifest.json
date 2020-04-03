@@ -10,7 +10,7 @@
     "persistent": true
   },
   
-	"browser_action": {},
+  "browser_action": {},
 
   "icons": {
     "50": "icons/icon50.png",
