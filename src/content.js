@@ -52,10 +52,9 @@ const replaceTextsOnNode = (textNode) => {
 
     const newValue = textNode.nodeValue.replace(blacklistRegExp, replacer)
     if (occurrences > 0) {
-      const wrapperEl = document.createElement('span')
+      const wrapperEl = document.createElement('template')
       wrapperEl.innerHTML = newValue
-      textNode.replaceWith(wrapperEl) // Now this element a parent node
-      wrapperEl.outerHTML = wrapperEl.innerHTML // so we can throw away the top level SPAN tag
+      textNode.replaceWith(wrapperEl.content)
     }
   }
 
