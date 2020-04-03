@@ -4,6 +4,7 @@ const ELEMENT_DONE_CLASSNAME = '__micalevisk_ext_coronguese__'
 
 const isGooglePage = document.location.hostname.startsWith('www.google.')
 const isDuckDuckGoPage = document.location.hostname.startsWith('duckduckgo.')
+const isBingPage = document.location.hostname.startsWith('www.bing.')
 
 const blacklistRegExp = (function(){
   const blacklistWordsRE = [
@@ -42,16 +43,18 @@ const hasURLContent = (textNode) => {
 }
 
 const replaceTextsOnNode = (textNode) => {
+  const parent = textNode.parentNode
   const normalizedNodeValue = textNode.nodeValue.trim()
   let occurrences = 0
 
   // Custom filters to prevent replace in non-valid texts node
   const isGoogleBreadcrumb = isGooglePage && normalizedNodeValue.includes(' › ')
-  const isGoogleHrefContent = isGooglePage && textNode.parentNode.className.includes('HRf')
+  const isGoogleHrefContent = isGooglePage && parent.className.includes('HRf')
+  const isDDGURL = isDuckDuckGoPage && parent.className.includes('result__url')
+  const isBingBreadcrumb = isBingPage && ( parent.tagName === 'CITE' && parent.parentNode.classList.contains('b_attribution') )
   const isURL = hasURLContent(textNode)
-  const isDDGURL = isDuckDuckGoPage && textNode.parentNode.className.includes('result__url')
 
-  const canSearchAndReplace = !isGoogleBreadcrumb && !isGoogleHrefContent && !isURL && !isDDGURL
+  const canSearchAndReplace = !isURL && !isGoogleBreadcrumb && !isGoogleHrefContent && !isDDGURL && !isBingBreadcrumb
   if (canSearchAndReplace) {
     const replacer = (match) => {
       occurrences++
